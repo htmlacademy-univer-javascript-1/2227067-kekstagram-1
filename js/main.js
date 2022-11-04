@@ -12,3 +12,4 @@ const strLength = (str, maxLength) => str.length <= maxLength;
 
 random(5, 10);
 strLength('str', 3);
+strLength('str', 5);
