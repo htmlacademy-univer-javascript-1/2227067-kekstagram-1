@@ -1,3 +1,3 @@
-import { getPosts } from './data.js';
+import { renderPosts } from './render-posts.js';
 
-getPosts();
+renderPosts();
