@@ -11,8 +11,10 @@ const getRandomNumber = (min, max) => {
 
 const getRandomArrayElement = (array) => array[getRandomNumber(0, array.length - 1)];
 
+const isEscapeKey = (evt) => evt.key === 'Escape';
+
 const isCorrectLength = (str, maxLength) => str.length <= maxLength;
 
 isCorrectLength('str', 5);
 
-export { getRandomNumber, getRandomArrayElement };
+export { getRandomNumber, getRandomArrayElement, isEscapeKey };

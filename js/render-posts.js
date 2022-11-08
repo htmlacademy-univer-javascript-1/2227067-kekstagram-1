@@ -1,4 +1,5 @@
 import { getPosts } from './data.js';
+import { openBigWindow } from './big-window.js';
 
 const blockPictures = document.querySelector('.pictures');
 const postTemplate = document.querySelector('#picture').content;
@@ -10,6 +11,9 @@ const renderPost = (post) => {
   clonePostPicture.querySelector('.picture__comments').textContent = post.comments.length;
   clonePostPicture.querySelector('.picture__likes').textContent = post.likes;
   blockPictures.appendChild(clonePostPicture);
+  clonePostPicture.addEventListener('click', () => {
+    openBigWindow(post);
+  });
 };
 
 const renderPosts = () => {
