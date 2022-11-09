@@ -17,4 +17,4 @@ const isCorrectLength = (str, maxLength) => str.length <= maxLength;
 
 isCorrectLength('str', 5);
 
-export { getRandomNumber, getRandomArrayElement, isEscapeKey };
+export { getRandomNumber, getRandomArrayElement, isEscapeKey, isCorrectLength };
