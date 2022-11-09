@@ -178,7 +178,6 @@ function zoomPicture() {
 }
 
 const updateSlider = (min, max, step, start) => {
-  console.log(slider);
   slider.noUiSlider.updateOptions({
     range: {
       min: min,
