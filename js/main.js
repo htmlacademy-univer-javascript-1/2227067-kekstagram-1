@@ -1,4 +1,4 @@
-import { renderPosts } from './render-posts.js';
+import { renderData } from './render-posts.js';
 import './upload-form.js';
 
-renderPosts();
+renderData();
