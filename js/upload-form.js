@@ -1,4 +1,5 @@
 import { isEscapeKey, isCorrectLength } from './util.js';
+import { sendData } from './api.js';
 
 const inputFile = document.querySelector('#upload-file');
 const editWindow = document.querySelector('.img-upload__overlay');
@@ -8,7 +9,6 @@ const form = document.querySelector('.img-upload__form');
 const hashtagForm = form.querySelector('.text__hashtags');
 const descriptionForm = form.querySelector('.text__description');
 const submitButton = form.querySelector('.img-upload__submit');
-
 
 const previewPicture = editWindow.querySelector('.img-upload__preview').querySelector('img');
 
@@ -23,10 +23,17 @@ const sliderBox = editWindow.querySelector('.img-upload__effect-level');
 
 let checkBox;
 
+const successTemplate = document.querySelector('#success').content.querySelector('.success');
+const errorTemplate = document.querySelector('#error').content.querySelector('.error');
+const successSubmission = successTemplate.cloneNode(true);
+const errorSubmission = errorTemplate.cloneNode(true);
+const closeSuccessButton = successSubmission.querySelector('.success__button');
+const closeErrorButton = errorSubmission.querySelector('.error__button');
+
+
 //// Event Listeners and Initial Values
 
 const setInitialValues = () => {
-  inputFile.value = '';
   hashtagForm.value = '';
   descriptionForm.value = '';
   submitButton.disabled = false;
@@ -37,6 +44,7 @@ const setInitialValues = () => {
   previewPicture.style.filter = '';
   previewPicture.className = '';
   checkBox = 'effect-none';
+  editWindow.querySelector('#effect-none').checked = true;
   sliderBox.classList.add('hidden');
 };
 
@@ -51,10 +59,12 @@ const closeEditWindow = () => {
   descriptionForm.removeEventListener('keydown', stopEsc);
 
   slider.noUiSlider.destroy();
+  inputFile.value = '';
+  setInitialValues();
 };
 
 function closeEditWindowOnEsc(evt) {
-  if (isEscapeKey(evt)) {
+  if (isEscapeKey(evt) && !document.body.contains(errorSubmission)) {
     closeEditWindow();
   }
 }
@@ -121,7 +131,7 @@ const validateDescription = (str) => {
   return result;
 };
 
-const validateHashTag = (str) => {
+const validateHashtag = (str) => {
   const hashtags = str.split(' ');
   const regex = /(^\s*$)|(^#[A-Za-zА-Яа-яЁё0-9]{1,19}$)/;
   let result = true;
@@ -142,7 +152,7 @@ const validateHashTag = (str) => {
 
 pristine.addValidator(
   hashtagForm,
-  validateHashTag,
+  validateHashtag,
   'Некорректный хэштэг!'
 );
 
@@ -152,9 +162,75 @@ pristine.addValidator(
   'Количество символов не должно превышать 140!'
 );
 
+const closeSuccessMessage = () => {
+  closeSuccessButton.removeEventListener('click', closeSuccessMessage);
+  document.removeEventListener('keydown', closeSuccessMessageOnEsc);
+  document.removeEventListener('click', clickOutOfSuccessBlock);
+  document.body.removeChild(successSubmission);
+};
+
+function clickOutOfSuccessBlock(evt) {
+  if (evt.target === successSubmission) {
+    closeSuccessMessage();
+  }
+}
+
+function closeSuccessMessageOnEsc(evt) {
+  if (isEscapeKey(evt)) {
+    evt.stopPropagation();
+    closeSuccessMessage();
+  }
+}
+
+const closeErrorMessage = () => {
+  closeErrorButton.removeEventListener('click', closeErrorMessage);
+  document.removeEventListener('keydown', closeErrorMessageOnEsc);
+  document.removeEventListener('click', clickOutOfErrorBlock);
+  document.body.removeChild(errorSubmission);
+  editWindow.classList.remove('hidden');
+};
+
+function clickOutOfErrorBlock(evt) {
+  if (evt.target === errorSubmission) {
+    closeErrorMessage();
+  }
+}
+
+function closeErrorMessageOnEsc(evt) {
+  if (isEscapeKey(evt)) {
+    evt.stopPropagation();
+    closeErrorMessage();
+  }
+}
+
 form.addEventListener('submit', (evt) => {
   evt.preventDefault();
-  pristine.validate();
+  const isValid = pristine.validate();
+  if (isValid) {
+    submitButton.disabled = true;
+    submitButton.textContent = 'Отправка...';
+    sendData(
+      () => {
+        closeEditWindow();
+        submitButton.disabled = false;
+        submitButton.textContent = 'Опубликовать';
+        closeSuccessButton.addEventListener('click', closeSuccessMessage);
+        document.addEventListener('click', clickOutOfSuccessBlock);
+        document.addEventListener('keydown', closeSuccessMessageOnEsc);
+        document.body.appendChild(successSubmission);
+      },
+      () => {
+        editWindow.classList.add('hidden');
+        submitButton.disabled = false;
+        submitButton.textContent = 'Опубликовать';
+        closeErrorButton.addEventListener('click', closeErrorMessage);
+        document.addEventListener('click', clickOutOfErrorBlock);
+        document.addEventListener('keydown', closeErrorMessageOnEsc);
+        document.body.appendChild(errorSubmission);
+      },
+      new FormData(evt.target),
+    );
+  }
 });
 
 //// Photo editing

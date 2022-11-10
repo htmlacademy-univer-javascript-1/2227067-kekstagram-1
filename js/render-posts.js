@@ -1,5 +1,6 @@
-import { getPosts } from './data.js';
 import { openBigWindow } from './big-window.js';
+import { getData } from './api.js';
+import { showAlert } from './util.js';
 
 const blockPictures = document.querySelector('.pictures');
 const postTemplate = document.querySelector('#picture').content;
@@ -17,10 +18,14 @@ const renderPost = (post) => {
 };
 
 const renderPosts = () => {
-  const posts = getPosts();
-  for (const post of posts) {
-    renderPost(post);
-  }
+  getData((posts) => {
+    for (const post of posts) {
+      renderPost(post);
+    }
+  },
+  () => {
+    showAlert('Ошибка загрузки данных!', 0);
+  });
 };
 
 export { renderPosts };
