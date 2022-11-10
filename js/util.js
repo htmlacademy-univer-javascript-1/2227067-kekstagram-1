@@ -29,11 +29,14 @@ const showAlert = (message, alertShowTime) => {
 
   alertContainer.textContent = message;
 
-  document.body.append(alertContainer);
-
-  setTimeout(() => {
-    alertContainer.remove();
-  }, alertShowTime);
+  if (alertShowTime === 0) {
+    document.body.append(alertContainer);
+  } else {
+    document.body.append(alertContainer);
+    setTimeout(() => {
+      alertContainer.remove();
+    }, alertShowTime);
+  }
 };
 
 export { getRandomNumber, getRandomArrayElement, isEscapeKey, isCorrectLength, showAlert };
