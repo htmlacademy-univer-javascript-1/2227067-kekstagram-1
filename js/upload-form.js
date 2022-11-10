@@ -140,8 +140,8 @@ const validateHashtag = (str) => {
     return false;
   }
   const setHashtags = new Set();
-  for (const el of hashtags) {
-    setHashtags.add(el);
+  for (const elem of hashtags) {
+    setHashtags.add(elem);
   }
   if (setHashtags.size !== hashtags.length) {
     return false;
