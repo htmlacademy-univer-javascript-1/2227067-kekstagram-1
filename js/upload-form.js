@@ -37,7 +37,10 @@ const setInitialValues = () => {
   hashtagForm.value = '';
   descriptionForm.value = '';
   submitButton.disabled = false;
-  document.querySelectorAll('.text__error').forEach((el) => el.remove());
+  const errors = document.querySelectorAll('.text__error');
+  for (const error of errors) {
+    error.textContent = '';
+  }
   sizePicture.value = '100%';
   previewPicture.style.transform = 'scale(1)';
   effectLevelValue.value = '';
