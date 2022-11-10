@@ -136,6 +136,16 @@ const validateDescription = (str) => {
 
 const validateHashtag = (str) => {
   const hashtags = str.split(' ');
+  if (hashtags.length > 5) {
+    return false;
+  }
+  const setHashtags = new Set();
+  for (const el of hashtags) {
+    setHashtags.add(el);
+  }
+  if (setHashtags.size !== hashtags.length) {
+    return false;
+  }
   const regex = /(^\s*$)|(^#[A-Za-zА-Яа-яЁё0-9]{1,19}$)/;
   let result = true;
   for (const hashtag of hashtags) {
@@ -240,7 +250,7 @@ form.addEventListener('submit', (evt) => {
 
 function resizePicture() {
   let currentSize = parseInt(sizePicture.value.replace('%', ''), 10);
-  if (currentSize > 0) {
+  if (currentSize > 25) {
     currentSize -= 25;
     sizePicture.value = `${currentSize}%`;
     previewPicture.style.transform = `scale(${currentSize / 100})`;
