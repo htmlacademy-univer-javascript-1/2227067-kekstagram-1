@@ -37,7 +37,10 @@ const setInitialValues = () => {
   hashtagForm.value = '';
   descriptionForm.value = '';
   submitButton.disabled = false;
-  document.querySelectorAll('.text__error').forEach((el) => el.remove());
+  const errors = document.querySelectorAll('.text__error');
+  for (const error of errors) {
+    error.textContent = '';
+  }
   sizePicture.value = '100%';
   previewPicture.style.transform = 'scale(1)';
   effectLevelValue.value = '';
@@ -133,6 +136,16 @@ const validateDescription = (str) => {
 
 const validateHashtag = (str) => {
   const hashtags = str.split(' ');
+  if (hashtags.length > 5) {
+    return false;
+  }
+  const setHashtags = new Set();
+  for (const elem of hashtags) {
+    setHashtags.add(elem);
+  }
+  if (setHashtags.size !== hashtags.length) {
+    return false;
+  }
   const regex = /(^\s*$)|(^#[A-Za-zА-Яа-яЁё0-9]{1,19}$)/;
   let result = true;
   for (const hashtag of hashtags) {
@@ -237,7 +250,7 @@ form.addEventListener('submit', (evt) => {
 
 function resizePicture() {
   let currentSize = parseInt(sizePicture.value.replace('%', ''), 10);
-  if (currentSize > 0) {
+  if (currentSize > 25) {
     currentSize -= 25;
     sizePicture.value = `${currentSize}%`;
     previewPicture.style.transform = `scale(${currentSize / 100})`;
